@@ -29,7 +29,7 @@ class SongsController < ApplicationController
       @song = Song.new
       redirect_to artists_path, alert: "Artist not found."
     else 
-      @song = Song.new(artist_id: params[:author_id])
+      @song = Song.new(artist_id: params[:artist_id])
     end
   end
 
@@ -44,7 +44,17 @@ class SongsController < ApplicationController
   end
 
   def edit
-    @song = Song.find(params[:id])
+    if params[:artist_id]
+    artist = Artist.find_by(id: params[:artist_id])
+    if artist.nil?
+      redirect_to artists_path, alert: "artist not found."
+    else
+      @post = artist.posts.find_by(id: params[:id])
+      redirect_to artist_posts_path(artist), alert: "Post not found." if @post.nil?
+    end
+  else
+    @post = Post.find(params[:id])
+  end
   end
 
   def update
